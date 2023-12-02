@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class Main {
 	public static void main(String[] args) throws FileNotFoundException {
-		File file = new File("C:\\Users\\Marcel\\IdeaProjects\\AdventOfCode\\src\\input.txt");
+		File file = new File("C:\\Users\\Marcel\\IdeaProjects\\AdventOfCode\\src\\Day1\\input.txt");
 		Scanner reader = new Scanner(file);
 
 		Pattern p = Pattern.compile("(one|two|three|four|five|six|seven|eight|nine|\\d)");
