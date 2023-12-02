@@ -10,8 +10,10 @@ public class Main {
 		File file = new File("C:\\Users\\Marcel\\IdeaProjects\\AdventOfCode\\src\\Day2\\input.txt");
 		Scanner reader = new Scanner(file);
 
-		int sum = 0;
+		int sumOfValid = 0;
+		int sumOfMins = 0;
 
+		int i = 3;
 		while (reader.hasNextLine()) {
 			String line = reader.nextLine();
 
@@ -20,17 +22,33 @@ public class Main {
 
 			String[] games = idSplit[1].split("; ");
 
+			int minRedGame = 0;
+			int minGreenGame = 0;
+			int minBlueGame = 0;
+
+			boolean valid = true;
 			for (String game : games) {
-				if (!checkIfWithinLimit(game)) {
-					sum -= id;
-					break;
+				if (!checkIfWithinLimit(game) && valid) {
+					sumOfValid -= id;
+					valid = false;
 				}
+
+				int[] mins = getMinimumRequired(game);
+				int red = mins[0];
+				int green = mins[1];
+				int blue = mins[2];
+
+				if (red > minRedGame) minRedGame = red;
+				if (green > minGreenGame) minGreenGame = green;
+				if (blue > minBlueGame) minBlueGame = blue;
 			}
 
-			sum += id;
+			sumOfValid += id;
+			sumOfMins += minRedGame * minGreenGame * minBlueGame;
 		}
 
-		System.out.println(sum);
+		System.out.println(sumOfValid);
+		System.out.println(sumOfMins);
 	}
 
 	private static boolean checkIfWithinLimit(String input) {
@@ -50,5 +68,22 @@ public class Main {
 		}
 
 		return true;
+	}
+
+	private static int[] getMinimumRequired(String input) {
+		String[] parts = input.split(", ");
+
+		int minRed = 0, minGreen = 0, minBlue = 0;
+
+		for (String part : parts) {
+			int num = Integer.parseInt(part.split(" ")[0]);
+			String color = part.split(" ")[1];
+
+			if (color.equals("red") && minRed < num) minRed = num;
+			if (color.equals("blue") && minBlue < num) minBlue = num;
+			if ( color.equals("green") && minGreen < num) minGreen = num;
+		}
+
+		return new int[] {minRed, minGreen, minBlue};
 	}
 }
