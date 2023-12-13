@@ -2,151 +2,80 @@ package Day3;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class Main {
-    private static int sum = 0;
-    private static int gearSum = 0;
-    private static char[][] data;
-    private static final boolean[][] checkedCells = new boolean[512][];
+	public static void main(String[] args) {
+		try {
+			File file = new File("src/Day3/input.txt");
+			Scanner scanner = new Scanner(file);
+			ArrayList<String> lines = new ArrayList<>();
 
-    private static final Pattern symbolPattern = Pattern.compile("[^\\w.\\s]");
-    private static final Pattern digitPattern = Pattern.compile("\\d");
+			while (scanner.hasNextLine()) {
+				lines.add(scanner.nextLine());
+			}
 
-    public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("/home/marcel/IdeaProjects/AoC2023/src/Day3/input.txt");
-        Scanner reader = new Scanner(file);
+			scanner.close();
 
-        // Initialize the 2D array with the correct dimensions
-        int lines = 0;
-        while (reader.hasNextLine()) {
-            reader.nextLine();
-            lines++;
-        }
-        data = new char[lines][];
+			String[] linesArray = lines.toArray(new String[0]);
+			System.out.println("Sum of part numbers: " + sumPartNumbers(linesArray));
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found!");
+		}
+	}
 
-        reader.close();
-        reader = new Scanner(file);
+	public static int sumPartNumbers(String[] schematic) {
+		int sum = 0;
+		String fullSchematic = String.join("\n", schematic);
+		Pattern pattern = Pattern.compile("\\d+");
+		Matcher matcher = pattern.matcher(fullSchematic);
 
-        // Add all lines to the 2D array
-        int i = 0;
-        while (reader.hasNextLine()) {
-            String line = reader.nextLine();
-            data[i] = line.toCharArray();
-            i++;
-        }
+		while (matcher.find()) {
+			String numberStr = matcher.group();
+			int numberStartIndex = matcher.start();
 
-        // Initialize the checkedCells array
-        for (int j = 0; j < data.length; j++) {
-            if (data[j] != null) {
-                checkedCells[j] = new boolean[data[j].length];
-            }
-        }
+			if (isAdjacentToSymbol(schematic, numberStartIndex, numberStr.length())) {
+				sum += Integer.parseInt(numberStr);
+			}
+		}
 
-        // Rest of your logic
-        for (int x = 0; x < data.length; x++) {
-            if (data[x] == null) continue;
+		return sum;
+	}
 
-            for (int y = 0; y < data[x].length; y++) {
-                if (symbolPattern.matcher(String.valueOf(data[x][y])).matches()) {
-                    // Check all adjacent cells
-                    checkAdjacentCells(x, y);
-                }
-            }
-        }
+	private static boolean isAdjacentToSymbol(String[] schematic, int startIndex, int length) {
+		String symbols = "*#$+%@/-";
 
-        System.out.println("Sum: " + sum + "\nGear sum: " + gearSum);
-    }
+		int lineLength = schematic[0].length();
+		int startRow = startIndex / (lineLength + 1);
+		int startColumn = startIndex % (lineLength + 1);
 
-    private static void checkAdjacentCells(int x, int y) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                if (dx == 0 && dy == 0) continue; // Skip the cell itself
-                int adjX = x + dx;
-                int adjY = y + dy;
-                if (adjX >= 0 && adjY >= 0 && adjX < data.length && adjY < data[0].length && isDigit(adjX, adjY)) {
-                    int[] leftPos = findLeftmost(adjX, adjY);
+		for (int i = 0; i < length; i++) {
+			int column = startColumn + i;
+			for (int x = -1; x <= 1; x++) {
+				for (int y = -1; y <= 1; y++) {
+					int checkRow = startRow + x;
+					int checkColumn = column + y;
 
-                    if (leftPos != null) sum += getFullNumber(leftPos[0], leftPos[1]);
-                }
-            }
-        }
+					if (checkRow >= 0 && checkRow < schematic.length &&
+							checkColumn >= 0 && checkColumn < lineLength &&
+							symbols.indexOf(getCharAtPosition(schematic, checkRow, checkColumn)) != -1) {
+						return true;
+					}
+				}
+			}
+		}
 
-        // New logic for checking gears
-        if (data[x][y] == '*') {
-            checkGear(x, y);
-        }
-    }
+		return false;
+	}
 
-    private static int[] findLeftmost(int x, int y) {
-        // Start from the current position and move left to find the leftmost digit
-        int startY = y;
-        while (startY > 0 && isDigit(x, startY - 1)) {
-            startY--;
-        }
-
-        // If the leftmost digit of the number has been checked, return
-        if (checkedCells[x][startY]) return null;
-
-        // Mark all digits of the number as checked
-        int endY = startY;
-        while (endY < data[x].length && isDigit(x, endY)) {
-            checkedCells[x][endY] = true;
-            endY++;
-        }
-
-        // Get the full number starting from the leftmost digit
-        return new int[]{x, startY};
-    }
-
-    private static boolean isDigit(int x, int y) {
-        if (x < 0 || x >= data.length || data[x] == null) return false;
-        if (y < 0 || y >= data[x].length) return false;
-        return digitPattern.matcher(Character.toString(data[x][y])).matches();
-    }
-
-    private static int getFullNumber(int x, int y) {
-        // Check if the coordinates are within the bounds of the matrix
-        if (x < 0 || x >= data.length || y < 0 || y >= data[0].length) {
-            return 0;
-        }
-
-        if (isDigit(x, y)) {
-            // Recursively get the number from the next position and build the current number
-            return Integer.parseInt(Character.toString(data[x][y])) * (int) Math.pow(10, countDigits(x, y + 1)) + getFullNumber(x, y + 1);
-        }
-
-        return 0;
-    }
-
-    private static int countDigits(int x, int y) {
-        if (y >= data[0].length || !digitPattern.matcher(Character.toString(data[x][y])).matches()) {
-            return 0;
-        }
-
-        return 1 + countDigits(x, y + 1);
-    }
-
-    private static void checkGear(int x, int y) {
-        int[] numbers = new int[2];
-        int count = 0;
-
-        for (int dx = -1; dx <= 1 && count < 2; dx++) {
-            for (int dy = -1; dy <= 1 && count < 2; dy++) {
-                if (dx == 0 && dy == 0) continue; // Skip the cell itself
-                int adjX = x + dx;
-                int adjY = y + dy;
-                if (adjX >= 0 && adjY >= 0 && adjX < data.length && adjY < data[0].length && isDigit(adjX, adjY)) {
-                    findLeftmost(adjX, adjY); // This also marks the number as checked
-                    numbers[count++] = getFullNumber(adjX, adjY);
-                }
-            }
-        }
-
-        if (count == 2) {
-            gearSum += numbers[0] * numbers[1];
-        }
-    }
+	private static char getCharAtPosition(String[] schematic, int row, int column) {
+		if (row < 0 || row >= schematic.length || column < 0 || column >= schematic[row].length()) {
+			return ' ';
+		}
+		return schematic[row].charAt(column);
+	}
 }
