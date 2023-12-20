@@ -20,36 +20,23 @@ public class Main {
 			scanner.close();
 
 			String[] linesArray = lines.toArray(new String[0]);
-			System.out.println("Total Points: " + getPoints(linesArray));
 
-			System.out.println("Total Cards: " + countTotalScratchCards(createScratchCardWinningMap(linesArray)));
+			Map<Integer, HashSet<Integer>> cardWinningMap = createScratchCardWinningMap(linesArray);
+			System.out.println("Total Points: " + getPoints(cardWinningMap));
+			System.out.println("Total Cards: " + countTotalScratchCards(cardWinningMap));
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found!");
 		}
 	}
 
-	public static int getPoints(String[] scratchCards) {
+	public static int getPoints(Map<Integer, HashSet<Integer>> cardWinningMap) {
 		int sum = 0;
 
-		for (String scratchCard : scratchCards) {
-			String[] cleanScratchCard = scratchCard.split(": ")[1].split(" \\| ");
+		for (Map.Entry<Integer, HashSet<Integer>> entry : cardWinningMap.entrySet()) {
+			HashSet<Integer> winningNumbers = entry.getValue();
+			int count = winningNumbers != null ? winningNumbers.size() : 0;
 
-			Integer[] winningNumbersArray = Arrays.stream(cleanScratchCard[0].split("\\s+"))
-					.filter(s -> !s.isEmpty())
-					.distinct()
-					.map(Integer::parseInt)
-					.toArray(Integer[]::new);
-
-			Integer[] scratchNumbersArray = Arrays.stream(cleanScratchCard[1].split("\\s+"))
-					.filter(s -> !s.isEmpty())
-					.distinct()
-					.map(Integer::parseInt)
-					.toArray(Integer[]::new);
-
-			long count = Arrays.stream(winningNumbersArray)
-					.filter(Arrays.asList(scratchNumbersArray)::contains)
-					.count();
-
+			// Calculate points for this card based on the number of winning numbers
 			sum += count > 0 ? (int) Math.pow(2, count - 1) : 0;
 		}
 
