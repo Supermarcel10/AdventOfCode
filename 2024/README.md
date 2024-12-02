@@ -39,10 +39,22 @@ The lower the complexity, the simpler the language is to learn.
 
 
 ## Day 1: Historian Hysteria
-Language: `PYTHON`
+**Language**: `PYTHON` ✰
+
+This challenge posed no complexity with a Python implementation for me.
+Python is a pretty standard language, which I've previously used for some projects.
+Throughout the whole challenge, I sort of expected what I would do and how I'd implement it.
+
+That said, it has been a while since I last touched python - this exercise was a great reminder.
+One thing I misremembered, is that Python has the `++` operator on an integer variable like many other languages.
+However, this wasn't a complex thing, but more of a cleanliness preference thing.
+
+As far as my implementation goes, it is definitely not the most efficient - as part of this challenge the aim isn't to get the least complexity in each language, but rather to use each language to experiment with it.
+Looking back at it, there are some python features that I could have used a bit better - the list could have been `sorted()` instead of using a `sort()` to sort it in place for cleaner code.
+The `distances` variable also is completely pointless, my assumption that it would come in handy for part 2 was wrong, and since I was able to write part 2 with no refactor required, I ended up not refactoring the file at all.
 
 ## Day 2: Red-Nosed Reports
-Language: `GO LANG`
+**Language**: `GO LANG` ✰ ✰ ✰ ✰
 
 Never having worked with GoLang, this was extremely difficult for me.
 The concepts of GoLang seem very weird, and certain aspects of the language don't make much sense to me - perhaps if I worked with the language a bit more, I'd be able to get a clearer grasp.
@@ -56,9 +68,9 @@ I did not understand the differences between the two, and originally tried doing
 This also doesn't seem coherent with a lot of other languages out there.
 
 While working on this, I realised there is a math package (it took me a while to find it, since the StackOverflow posts were above).
-The math package is very stripped down, and lacks most basic functionality like clamping a number between two numbers (I wrote `clamp` [LINE 108](Day%202/main.go#L108) for this with my hard coded variables).
-The math package does in fact have an `Abs` function, but it's signature only takes float64 - I'd have to convert my integers into floating points?
+The math package is very stripped down, and lacks most basic functionality like clamping a number between two numbers (I wrote `clamp()` [LINE 108](Day%202/main.go#L108) for this with my hard coded variables).
+The math package does in fact have an `Abs()` function, but it's signature only takes float64 - I'd have to convert my integers into floating points?
 I don't understand why the inputs wouldn't be generic as in most other languages, which just adds unnecessary complexity, and potential for other issues with the use of only floating points.
 
 ## Day 3: TBD
-Language: ``
+**Language**: `TBD` ✰ ✰ ✰ ✰ ✰
