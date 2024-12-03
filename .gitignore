@@ -2,6 +2,7 @@
 **/out/
 **/bin/
 **/obj/
+**/dist*/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
@@ -19,12 +20,12 @@
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
 
 ### VS Code ###
 .vscode/
+.vs/
 
 ### Mac OS ###
 .DS_Store
