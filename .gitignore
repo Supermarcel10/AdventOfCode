@@ -32,3 +32,6 @@
 .DS_Store
 
 **/.idea/
+**/*gradle*
+!settings.gradle.kts
+!build.gradle.kts
