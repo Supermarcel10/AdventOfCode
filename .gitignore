@@ -35,3 +35,5 @@
 **/*gradle*
 !settings.gradle.kts
 !build.gradle.kts
+
+**/node_modules/
